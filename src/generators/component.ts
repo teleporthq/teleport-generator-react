@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import * as prettier from 'prettier'
+import * as prettier from 'prettier-standalone'
 import * as deepmerge from 'deepmerge'
 
 import { ComponentGenerator, Generator, RenderResult } from '../../teleport-lib-js'
@@ -172,7 +172,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     result.addFile(
       `${_.upperFirst(component.name)}.js`,
       // tslint:disable-next-line:max-line-length
-      prettier.format(COMPONENTrenderer(name, jsx, dependencies, styles, props), deepmerge(prettierOptions, options.prettier || {}))
+      prettier.format(COMPONENTrenderer(name, jsx, dependencies, styles, props), prettierOptions)
     )
 
     return result

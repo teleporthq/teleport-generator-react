@@ -28,8 +28,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = require("lodash");
-var prettier = require("prettier");
-var deepmerge = require("deepmerge");
+var prettier = require("prettier-standalone");
 var teleport_lib_js_1 = require("../../teleport-lib-js");
 var jsx_1 = require("../renderers/jsx");
 var component_1 = require("../renderers/component");
@@ -173,7 +172,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         var result = new teleport_lib_js_1.RenderResult();
         result.addFile(_.upperFirst(component.name) + ".js", 
         // tslint:disable-next-line:max-line-length
-        prettier.format(component_1.default(name, jsx, dependencies, styles, props), deepmerge(prettier_1.default, options.prettier || {})));
+        prettier.format(component_1.default(name, jsx, dependencies, styles, props), prettier_1.default));
         return result;
         // return COMPONENTrenderer(name, jsx, dependencies, styles, props)
     };

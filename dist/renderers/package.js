@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var prettier = require("prettier");
+var prettier = require("prettier-standalone");
 function packageRenderer(project) {
     var pkg = {
         name: project.slug,
