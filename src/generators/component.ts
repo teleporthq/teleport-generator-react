@@ -1,14 +1,16 @@
 import * as _ from 'lodash'
 import * as prettier from 'prettier-standalone'
 import * as deepmerge from 'deepmerge'
+import teleport from '../teleport'
 
-import { ComponentGenerator, Generator, RenderResult } from '../../teleport-lib-js'
 import TeleportGeneratorReact from '../index'
 import JSXrenderer from '../renderers/jsx'
 import COMPONENTrenderer from '../renderers/component'
 import prettierOptions from '../options/prettier'
 
-function findNextIndexedKeyInObject(object, key){
+const { ComponentGenerator, Generator, RenderResult } = teleport
+
+function findNextIndexedKeyInObject(object, key) {
   if (! object[key]) return key
   let i=1
   while (object[key + "_" + i] !== undefined) {

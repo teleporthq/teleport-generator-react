@@ -1,8 +1,10 @@
 import * as _ from 'lodash'
-import { ProjectGenerator, Generator, RenderResult } from '../../teleport-lib-js'
+import teleport from '../teleport'
 import TeleportGeneratorReact from '../index'
 import packageRenderer from '../renderers/package'
 import ReactComponentGenerator from './component'
+
+const { ProjectGenerator, Generator, RenderResult } = teleport
 
 export default class ReactProjectGenerator extends ProjectGenerator {
   public generator: TeleportGeneratorReact

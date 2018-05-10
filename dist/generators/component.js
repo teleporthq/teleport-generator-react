@@ -29,10 +29,11 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = require("lodash");
 var prettier = require("prettier-standalone");
-var teleport_lib_js_1 = require("../../teleport-lib-js");
+var teleport_1 = require("../teleport");
 var jsx_1 = require("../renderers/jsx");
 var component_1 = require("../renderers/component");
 var prettier_1 = require("../options/prettier");
+var ComponentGenerator = teleport_1.default.ComponentGenerator, Generator = teleport_1.default.Generator, RenderResult = teleport_1.default.RenderResult;
 function findNextIndexedKeyInObject(object, key) {
     if (!object[key])
         return key;
@@ -169,7 +170,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         var jsx = this.renderComponentJSX(content);
         var props = (component.editableProps ? Object.keys(component.editableProps) : null);
         // tslint:disable-next-line:max-line-length
-        var result = new teleport_lib_js_1.RenderResult();
+        var result = new RenderResult();
         result.addFile(_.upperFirst(component.name) + ".js", 
         // tslint:disable-next-line:max-line-length
         prettier.format(component_1.default(name, jsx, dependencies, styles, props), prettier_1.default));
@@ -177,6 +178,6 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         // return COMPONENTrenderer(name, jsx, dependencies, styles, props)
     };
     return ReactComponentGenerator;
-}(teleport_lib_js_1.ComponentGenerator));
+}(ComponentGenerator));
 exports.default = ReactComponentGenerator;
 //# sourceMappingURL=component.js.map
