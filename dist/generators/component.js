@@ -29,11 +29,11 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = require("lodash");
 var prettier = require("prettier-standalone");
-var teleport_1 = require("../teleport");
+var teleport = require("teleport-lib-js");
 var jsx_1 = require("../renderers/jsx");
 var component_1 = require("../renderers/component");
 var prettier_1 = require("../options/prettier");
-var ComponentGenerator = teleport_1.default.ComponentGenerator, Generator = teleport_1.default.Generator, RenderResult = teleport_1.default.RenderResult;
+var ComponentGenerator = teleport.ComponentGenerator, Generator = teleport.Generator, RenderResult = teleport.RenderResult;
 function findNextIndexedKeyInObject(object, key) {
     if (!object[key])
         return key;

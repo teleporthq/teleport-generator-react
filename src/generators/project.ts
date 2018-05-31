@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import teleport from '../teleport'
+import * as teleport from 'teleport-lib-js'
 import TeleportGeneratorReact from '../index'
 import packageRenderer from '../renderers/package'
 import ReactComponentGenerator from './component'

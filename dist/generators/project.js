@@ -10,9 +10,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var teleport_1 = require("../teleport");
+var teleport = require("teleport-lib-js");
 var package_1 = require("../renderers/package");
-var ProjectGenerator = teleport_1.default.ProjectGenerator, Generator = teleport_1.default.Generator, RenderResult = teleport_1.default.RenderResult;
+var ProjectGenerator = teleport.ProjectGenerator, Generator = teleport.Generator, RenderResult = teleport.RenderResult;
 var ReactProjectGenerator = /** @class */ (function (_super) {
     __extends(ReactProjectGenerator, _super);
     function ReactProjectGenerator(generator, componentGenerator) {
