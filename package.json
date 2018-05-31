@@ -6,6 +6,7 @@
   "scripts": {
     "watch-build": "./node_modules/.bin/tsc -w",
     "build": "npm run clean && ./node_modules/.bin/tsc",
+    "install:dev": "npm i && npm link ../teleport-lib-js",
     "clean": "rm -rf dist"
   },
   "repository": {

@@ -10,10 +10,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var teleport_1 = require("./teleport");
+var teleport = require("teleport-lib-js");
 var component_1 = require("./generators/component");
 var project_1 = require("./generators/project");
-var Generator = teleport_1.default.Generator;
+var Generator = teleport.Generator;
 var TeleportGeneratorReact = /** @class */ (function (_super) {
     __extends(TeleportGeneratorReact, _super);
     function TeleportGeneratorReact() {

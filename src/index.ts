@@ -1,4 +1,4 @@
-import teleport from './teleport'
+import * as teleport from 'teleport-lib-js'
 import ReactComponentGenerator from './generators/component'
 import ReactProjectGenerator from './generators/project'
 
