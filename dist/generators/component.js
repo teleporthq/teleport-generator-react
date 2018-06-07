@@ -33,7 +33,7 @@ var teleport = require("teleport-lib-js");
 var jsx_1 = require("../renderers/jsx");
 var component_1 = require("../renderers/component");
 var prettier_1 = require("../options/prettier");
-var ComponentGenerator = teleport.ComponentGenerator, Generator = teleport.Generator, RenderResult = teleport.RenderResult;
+var ComponentGenerator = teleport.ComponentGenerator, Generator = teleport.Generator, FileSet = teleport.FileSet;
 function findNextIndexedKeyInObject(object, key) {
     if (!object[key])
         return key;
@@ -170,7 +170,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         var jsx = this.renderComponentJSX(content);
         var props = (component.editableProps ? Object.keys(component.editableProps) : null);
         // tslint:disable-next-line:max-line-length
-        var result = new RenderResult();
+        var result = new FileSet();
         result.addFile(_.upperFirst(component.name) + ".js", 
         // tslint:disable-next-line:max-line-length
         prettier.format(component_1.default(name, jsx, dependencies, styles, props), prettier_1.default));

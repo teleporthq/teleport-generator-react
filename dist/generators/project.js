@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var teleport = require("teleport-lib-js");
 var package_1 = require("../renderers/package");
-var ProjectGenerator = teleport.ProjectGenerator, Generator = teleport.Generator, RenderResult = teleport.RenderResult;
+var ProjectGenerator = teleport.ProjectGenerator, Generator = teleport.Generator, FileSet = teleport.FileSet;
 var ReactProjectGenerator = /** @class */ (function (_super) {
     __extends(ReactProjectGenerator, _super);
     function ReactProjectGenerator(generator, componentGenerator) {
@@ -25,7 +25,7 @@ var ReactProjectGenerator = /** @class */ (function (_super) {
         var _this = this;
         if (options === void 0) { options = {}; }
         var name = project.name, components = project.components, pages = project.pages;
-        var result = new RenderResult();
+        var result = new FileSet();
         result.addFile('package.json', package_1.default(project));
         if (components) {
             Object.keys(components).map(function (componentName) {

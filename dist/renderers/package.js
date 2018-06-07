@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var prettier = require("prettier-standalone");
 function packageRenderer(project) {
     var pkg = {
         name: project.slug,
@@ -19,7 +18,7 @@ function packageRenderer(project) {
             "react-dom": "^16.3.0"
         }
     };
-    return prettier.format(JSON.stringify(pkg), { parser: 'json' });
+    return JSON.stringify(pkg, null, 2);
 }
 exports.default = packageRenderer;
 //# sourceMappingURL=package.js.map
