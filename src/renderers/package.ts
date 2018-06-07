@@ -18,5 +18,5 @@ export default function packageRenderer(project: any): any {
       "react-dom": "^16.3.0"
     }
   }
-  return prettier.format(JSON.stringify(pkg), { parser: 'json' })
+  return JSON.stringify(pkg, null, 2)
 }

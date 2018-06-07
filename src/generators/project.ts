@@ -4,7 +4,7 @@ import TeleportGeneratorReact from '../index'
 import packageRenderer from '../renderers/package'
 import ReactComponentGenerator from './component'
 
-const { ProjectGenerator, Generator, RenderResult } = teleport
+const { ProjectGenerator, Generator, FileSet } = teleport
 
 export default class ReactProjectGenerator extends ProjectGenerator {
   public generator: TeleportGeneratorReact
@@ -16,10 +16,10 @@ export default class ReactProjectGenerator extends ProjectGenerator {
   }
 
   // tslint:disable-next-line:no-shadowed-variable
-  public generate(project: any, options: any = {}): RenderResult {
+  public generate(project: any, options: any = {}): FileSet {
     const { name, components, pages } = project
 
-    const result = new RenderResult()
+    const result = new FileSet()
     result.addFile(
       'package.json',
       packageRenderer(project)
