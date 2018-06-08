@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 
 const renderDependency = (libraryName, types) => {
-  return `import { ${types.join(', ')} } from '${libraryName}'`
+  return `import ${types.join(', ')} from '${libraryName}'`
 }
 
 export default function component(name: string, jsx: string, dependencies: any = {}, styles, props): any {

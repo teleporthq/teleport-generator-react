@@ -1,5 +1,3 @@
-import * as prettier from 'prettier-standalone'
-
 export default function packageRenderer(project: any): any {
   const pkg = {
     name: project.slug,

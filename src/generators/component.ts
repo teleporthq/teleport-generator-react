@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import * as prettier from 'prettier-standalone'
-import * as deepmerge from 'deepmerge'
 import * as teleport from 'teleport-lib-js'
 
 import TeleportGeneratorReact from '../index'
