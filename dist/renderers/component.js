@@ -2,7 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = require("lodash");
 var renderDependency = function (libraryName, types) {
-    return "import " + types.join(', ') + " from '" + libraryName + "'";
+    var path = libraryName.indexOf('components/') === -1
+        ? ''
+        : '../';
+    return "import " + types.join(', ') + " from '" + path + libraryName + "'";
 };
 function component(name, jsx, dependencies, styles, props) {
     if (dependencies === void 0) { dependencies = {}; }
