@@ -1,8 +1,6 @@
-import * as teleport from 'teleport-lib-js'
+import { Generator } from 'teleport-lib-js'
 import ReactComponentGenerator from './generators/component'
 import ReactProjectGenerator from './generators/project'
-
-const { Generator } = teleport
 
 export default class TeleportGeneratorReact extends Generator {
   constructor() {
