@@ -1,10 +1,9 @@
-import * as _ from 'lodash'
-import * as teleport from 'teleport-lib-js'
+import * as teleport from '@teleporthq/teleport-lib-js'
 import TeleportGeneratorReact from '../index'
 import packageRenderer from '../renderers/package'
 import ReactComponentGenerator from './component'
 
-const { ProjectGenerator, Generator, FileSet } = teleport
+const { ProjectGenerator, FileSet } = teleport
 
 export default class ReactProjectGenerator extends ProjectGenerator {
   public generator: TeleportGeneratorReact
@@ -15,38 +14,28 @@ export default class ReactProjectGenerator extends ProjectGenerator {
     this.componentGenerator = componentGenerator
   }
 
-  // tslint:disable-next-line:no-shadowed-variable
-  public generate(project: any, options: any = {}): FileSet {
-    const { name, components, pages } = project
+  public generate(project: any, options: any = {}): teleport.FileSet {
+    const { components, pages } = project
 
     const result = new FileSet()
-    result.addFile(
-      'package.json',
-      packageRenderer(project)
-    )
+    result.addFile('package.json', packageRenderer(project))
 
     if (components) {
-      Object.keys(components).map(componentName => {
+      Object.keys(components).map((componentName) => {
         const component = components[componentName]
         const componentResults = this.componentGenerator.generate(component)
-        componentResults.getFileNames().map(fileName => {
-          result.addFile(
-            `components/${fileName}`,
-            componentResults.getContent(fileName)
-          )
+        componentResults.getFileNames().map((fileName) => {
+          result.addFile(`components/${fileName}`, componentResults.getContent(fileName))
         })
       })
     }
 
     if (pages) {
-      Object.keys(pages).map(pageName => {
+      Object.keys(pages).map((pageName) => {
         const page = pages[pageName]
         const pageResults = this.componentGenerator.generate(page)
-        pageResults.getFileNames().map(fileName => {
-          result.addFile(
-            `pages/${fileName}`,
-            pageResults.getContent(fileName)
-          )
+        pageResults.getFileNames().map((fileName) => {
+          result.addFile(`pages/${fileName}`, pageResults.getContent(fileName))
         })
       })
     }
