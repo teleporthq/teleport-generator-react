@@ -10,7 +10,7 @@ export default class ReactProjectGenerator extends ProjectGenerator {
   public componentGenerator: ReactComponentGenerator
 
   constructor(generator: TeleportGeneratorReact, componentGenerator: ReactComponentGenerator) {
-    super(generator as Generator)
+    super(generator)
     this.componentGenerator = componentGenerator
   }
 

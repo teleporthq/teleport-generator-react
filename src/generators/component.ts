@@ -23,7 +23,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
   public generator: TeleportGeneratorReact
 
   constructor(generator: TeleportGeneratorReact) {
-    super(generator as Generator)
+    super(generator)
   }
 
   public processStyles(componentContent: any, styles: any): any {
