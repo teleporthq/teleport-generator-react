@@ -1,4 +1,5 @@
-import * as _ from 'lodash'
+import upperFirst from 'lodash/upperFirst'
+import union from 'lodash/union'
 import * as prettier from 'prettier-standalone'
 import * as teleport from '@teleporthq/teleport-lib-js'
 
@@ -93,7 +94,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
         childrenDependenciesArray.forEach((childrenDependency) => {
           Object.keys(childrenDependency).forEach((childrenDependencyLibrary) => {
             if (!dependencies[childrenDependencyLibrary]) dependencies[childrenDependencyLibrary] = []
-            dependencies[childrenDependencyLibrary] = _.union(dependencies[childrenDependencyLibrary], childrenDependency[childrenDependencyLibrary])
+            dependencies[childrenDependencyLibrary] = union(dependencies[childrenDependencyLibrary], childrenDependency[childrenDependencyLibrary])
           })
         })
       }
@@ -162,7 +163,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     const props = component.editableProps ? Object.keys(component.editableProps) : null
 
     const result = new FileSet()
-    result.addFile(`${_.upperFirst(component.name)}.js`, prettier.format(COMPONENTrenderer(name, jsx, dependencies, styles, props), prettierOptions))
+    result.addFile(`${upperFirst(component.name)}.js`, prettier.format(COMPONENTrenderer(name, jsx, dependencies, styles, props), prettierOptions))
 
     return result
   }
