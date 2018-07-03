@@ -28,7 +28,8 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var teleport_lib_js_1 = require("@teleporthq/teleport-lib-js");
-var _ = require("lodash");
+var upperFirst_1 = require("lodash/upperFirst");
+var union_1 = require("lodash/union");
 var prettier = require("prettier-standalone");
 var jsx_1 = require("../renderers/jsx");
 var component_1 = require("../renderers/component");
@@ -37,10 +38,10 @@ function findNextIndexedKeyInObject(object, key) {
     if (!object[key])
         return key;
     var i = 1;
-    while (object[key + "_" + i] !== undefined) {
+    while (object[key + '_' + i] !== undefined) {
         i++;
     }
-    return key + "_" + i;
+    return key + '_' + i;
 }
 var ReactComponentGenerator = /** @class */ (function (_super) {
     __extends(ReactComponentGenerator, _super);
@@ -71,7 +72,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
     ReactComponentGenerator.prototype.computeDependencies = function (content) {
         var _this = this;
         var dependencies = {};
-        var source = content.source, type = content.type, children = content.children, otherProps = __rest(content, ["source", "type", "children"]);
+        var source = content.source, type = content.type, children = content.children;
         if (source && type) {
             if (source === 'components') {
                 return _a = {},
@@ -95,19 +96,19 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
                 }
             }
             else {
+                // tslint:disable:no-console
                 console.error("could not map '" + type + "' from '" + source + "' for target '" + this.generator.targetName + "'");
             }
         }
         // if there are childrens, get their deps and merge them with the current ones
-        if (children && children.length > 0 && typeof children !== "string") {
+        if (children && children.length > 0 && typeof children !== 'string') {
             var childrenDependenciesArray = children.map(function (child) { return _this.computeDependencies(child); });
             if (childrenDependenciesArray.length) {
                 childrenDependenciesArray.forEach(function (childrenDependency) {
                     Object.keys(childrenDependency).forEach(function (childrenDependencyLibrary) {
                         if (!dependencies[childrenDependencyLibrary])
                             dependencies[childrenDependencyLibrary] = [];
-                        // tslint:disable-next-line:max-line-length
-                        dependencies[childrenDependencyLibrary] = _.union(dependencies[childrenDependencyLibrary], childrenDependency[childrenDependencyLibrary]);
+                        dependencies[childrenDependencyLibrary] = union_1.default(dependencies[childrenDependencyLibrary], childrenDependency[childrenDependencyLibrary]);
                     });
                 });
             }
@@ -140,15 +141,12 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         delete props.children;
         var childrenJSX = [];
         if (children && children.length > 0) {
-            if (typeof children === "string")
-                childrenJSX = children;
-            else
-                childrenJSX = children.map(function (child) { return _this.renderComponentJSX(child); });
+            childrenJSX = typeof children === 'string' ? children : children.map(function (child) { return _this.renderComponentJSX(child); });
         }
         if (Array.isArray(childrenJSX)) {
             childrenJSX = childrenJSX.join('');
         }
-        styleNames = styleNames ? styleNames.map(function (style) { return "styles." + style; }).join(', ') : null;
+        styleNames = styleNames ? styleNames.map(function (style) { return 'styles.' + style; }).join(', ') : null;
         var name = props.name, componentProps = props.props, otherProps = __rest(props, ["name", "props"]); // this is to cover img uri props; aka static props
         var mappedProps = __assign({}, componentProps, otherProps);
         if (mapping && typeof mapping.props === 'function') {
@@ -156,7 +154,6 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         }
         return jsx_1.default(mappedType, childrenJSX, styleNames, mappedProps);
     };
-    // tslint:disable-next-line:no-shadowed-variable
     ReactComponentGenerator.prototype.generate = function (component, options) {
         if (options === void 0) { options = {}; }
         var name = component.name;
@@ -165,16 +162,11 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         var stylingResults = this.processStyles(content, {});
         var styles = stylingResults.styles;
         content = stylingResults.content;
-        // tslint:disable-next-line:no-shadowed-variable
         var jsx = this.renderComponentJSX(content);
-        var props = (component.editableProps ? Object.keys(component.editableProps) : null);
-        // tslint:disable-next-line:max-line-length
+        var props = component.editableProps ? Object.keys(component.editableProps) : null;
         var result = new teleport_lib_js_1.FileSet();
-        result.addFile(_.upperFirst(component.name) + ".js", 
-        // tslint:disable-next-line:max-line-length
-        prettier.format(component_1.default(name, jsx, dependencies, styles, props), prettier_1.default));
+        result.addFile(upperFirst_1.default(component.name) + ".js", prettier.format(component_1.default(name, jsx, dependencies, styles, props), prettier_1.default));
         return result;
-        // return COMPONENTrenderer(name, jsx, dependencies, styles, props)
     };
     return ReactComponentGenerator;
 }(teleport_lib_js_1.ComponentGenerator));
