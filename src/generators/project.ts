@@ -1,23 +1,20 @@
-import * as _ from 'lodash'
-import * as teleport from 'teleport-lib-js'
+import { ProjectGenerator, FileSet } from '@teleporthq/teleport-lib-js'
 import TeleportGeneratorReact from '../index'
 import packageRenderer from '../renderers/package'
 import ReactComponentGenerator from './component'
-
-const { ProjectGenerator, Generator, FileSet } = teleport
 
 export default class ReactProjectGenerator extends ProjectGenerator {
   public generator: TeleportGeneratorReact
   public componentGenerator: ReactComponentGenerator
 
   constructor(generator: TeleportGeneratorReact, componentGenerator: ReactComponentGenerator) {
-    super(generator as Generator)
+    super(generator)
     this.componentGenerator = componentGenerator
   }
 
   // tslint:disable-next-line:no-shadowed-variable
   public generate(project: any, options: any = {}): FileSet {
-    const { name, components, pages } = project
+    const { components, pages } = project
 
     const result = new FileSet()
     result.addFile(

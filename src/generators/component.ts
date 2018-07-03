@@ -1,13 +1,11 @@
+import { ComponentGenerator, FileSet } from '@teleporthq/teleport-lib-js'
 import * as _ from 'lodash'
 import * as prettier from 'prettier-standalone'
-import * as teleport from 'teleport-lib-js'
 
 import TeleportGeneratorReact from '../index'
 import JSXrenderer from '../renderers/jsx'
 import COMPONENTrenderer from '../renderers/component'
 import prettierOptions from '../options/prettier'
-
-const { ComponentGenerator, Generator, FileSet } = teleport
 
 function findNextIndexedKeyInObject(object, key) {
   if (! object[key]) return key
@@ -22,7 +20,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
   public generator: TeleportGeneratorReact
 
   constructor(generator: TeleportGeneratorReact) {
-    super(generator as Generator)
+    super(generator)
   }
 
   public processStyles(componentContent: any, styles: any): any {
@@ -36,7 +34,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     }
 
     // if has children, do the same for children
-    if (content.children && content.children.length > 0){
+    if (content.children && content.children.length > 0) {
       if (typeof content.children !== "string") {
         content.children = content.children.map( child => {
           const childStyledResults = this.processStyles(child, styles)
