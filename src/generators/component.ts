@@ -145,7 +145,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     return JSXrenderer(mappedType, childrenJSX, styleNames, mappedProps)
   }
 
-  public generate(component: any, options: any = {}): teleport.FileSet {
+  public generate(component: any, options: any = {}): FileSet {
     const { name } = component
     let { content } = component
 

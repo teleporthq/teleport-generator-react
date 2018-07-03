@@ -59,7 +59,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         }
         // if has children, do the same for children
         if (content.children && content.children.length > 0) {
-            if (typeof content.children !== "string") {
+            if (typeof content.children !== 'string') {
                 content.children = content.children.map(function (child) {
                     var childStyledResults = _this.processStyles(child, styles);
                     styles = __assign({}, styles, childStyledResults.styles);
@@ -71,6 +71,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
     };
     ReactComponentGenerator.prototype.computeDependencies = function (content) {
         var _this = this;
+        var _a, _b;
         var dependencies = {};
         var source = content.source, type = content.type, children = content.children;
         if (source && type) {
@@ -114,7 +115,6 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
             }
         }
         return dependencies;
-        var _a, _b;
     };
     ReactComponentGenerator.prototype.renderComponentJSX = function (content) {
         var _this = this;
