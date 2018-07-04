@@ -1,6 +1,6 @@
 {
   "name": "@teleporthq/teleport-generator-react",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "React code generator for teleportHQ",
   "main": "dist/index.js",
   "scripts": {

@@ -1,6 +1,5 @@
 import { ComponentGenerator, FileSet } from '@teleporthq/teleport-lib-js'
-import upperFirst from 'lodash/upperFirst'
-import union from 'lodash/union'
+import { upperFirst, union } from 'lodash'
 import * as prettier from 'prettier-standalone'
 
 import TeleportGeneratorReact from '../index'

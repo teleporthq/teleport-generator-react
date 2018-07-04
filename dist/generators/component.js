@@ -28,8 +28,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var teleport_lib_js_1 = require("@teleporthq/teleport-lib-js");
-var upperFirst_1 = require("lodash/upperFirst");
-var union_1 = require("lodash/union");
+var lodash_1 = require("lodash");
 var prettier = require("prettier-standalone");
 var jsx_1 = require("../renderers/jsx");
 var component_1 = require("../renderers/component");
@@ -109,7 +108,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
                     Object.keys(childrenDependency).forEach(function (childrenDependencyLibrary) {
                         if (!dependencies[childrenDependencyLibrary])
                             dependencies[childrenDependencyLibrary] = [];
-                        dependencies[childrenDependencyLibrary] = union_1.default(dependencies[childrenDependencyLibrary], childrenDependency[childrenDependencyLibrary]);
+                        dependencies[childrenDependencyLibrary] = lodash_1.union(dependencies[childrenDependencyLibrary], childrenDependency[childrenDependencyLibrary]);
                     });
                 });
             }
@@ -165,7 +164,7 @@ var ReactComponentGenerator = /** @class */ (function (_super) {
         var jsx = this.renderComponentJSX(content);
         var props = component.editableProps ? Object.keys(component.editableProps) : null;
         var result = new teleport_lib_js_1.FileSet();
-        result.addFile(upperFirst_1.default(component.name) + ".js", prettier.format(component_1.default(name, jsx, dependencies, styles, props), prettier_1.default));
+        result.addFile(lodash_1.upperFirst(component.name) + ".js", prettier.format(component_1.default(name, jsx, dependencies, styles, props), prettier_1.default));
         return result;
     };
     return ReactComponentGenerator;
