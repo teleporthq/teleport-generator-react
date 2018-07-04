@@ -15,5 +15,6 @@ module.exports = {
   "testEnvironment": "node",
   "collectCoverageFrom": [
     "src/**/*",
+    "!**/*.d.ts"
   ]
 }
