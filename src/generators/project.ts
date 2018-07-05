@@ -23,9 +23,12 @@ export default class ReactProjectGenerator extends ProjectGenerator {
       Object.keys(components).map((componentName) => {
         const component = components[componentName]
         const componentResults = this.componentGenerator.generate(component)
-        componentResults.getFileNames().map((fileName) => {
-          result.addFile(`components/${fileName}`, componentResults.getContent(fileName))
-        })
+
+        componentResults.getFileNames().map(
+          (fileName: string): void => {
+            result.addFile(`components/${fileName}`, componentResults.getContent(fileName))
+          }
+        )
       })
     }
 
