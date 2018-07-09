@@ -3,7 +3,7 @@ import ReactComponentGenerator from './generators/component'
 import ReactProjectGenerator from './generators/project'
 
 export default class TeleportGeneratorReact extends Generator {
-  // @todo: can we avoid redeclaring target and targetName since they exist on Generator?
+  // @todo: can we avoid redeclaring componentGenerator and projectGenerator since they exist on Generator?
   public componentGenerator: ReactComponentGenerator
   public projectGenerator: ReactProjectGenerator
 
