@@ -12,7 +12,6 @@ export default class ReactProjectGenerator extends ProjectGenerator {
     this.componentGenerator = componentGenerator
   }
 
-  // tslint:disable-next-line:no-shadowed-variable
   public generate(project: any, options: any = {}): FileSet {
     const { components, pages } = project
 
