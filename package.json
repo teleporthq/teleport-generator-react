@@ -1,8 +1,9 @@
 {
   "name": "@teleporthq/teleport-generator-react",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "React code generator for teleportHQ",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "start": "tsc -w",
     "build": "npm run clean && tsc",
