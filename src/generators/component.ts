@@ -1,11 +1,12 @@
 import { ComponentGenerator, FileSet } from '@teleporthq/teleport-lib-js'
-import { upperFirst, union } from 'lodash'
-import * as prettier from 'prettier-standalone'
+import upperFirst = require('lodash/upperFirst')
+import union = require('lodash/union')
+import prettier = require('prettier/standalone')
+import prettierBabylonPlugins = require('prettier/parser-babylon')
 
 import TeleportGeneratorReact from '../index'
 import JSXrenderer from '../renderers/jsx'
 import COMPONENTrenderer from '../renderers/component'
-import prettierOptions from '../options/prettier'
 
 function findNextIndexedKeyInObject(object, key) {
   if (!object[key]) return key
@@ -160,7 +161,10 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     const props = component.editableProps ? Object.keys(component.editableProps) : null
 
     const result = new FileSet()
-    result.addFile(`${upperFirst(component.name)}.js`, prettier.format(COMPONENTrenderer(name, jsx, dependencies, styles, props), prettierOptions))
+    result.addFile(
+      `${upperFirst(component.name)}.js`,
+      prettier.format(COMPONENTrenderer(name, jsx, dependencies, styles, props), { parser: 'babylon', plugins: [prettierBabylonPlugins] })
+    )
 
     return result
   }

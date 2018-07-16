@@ -6,11 +6,11 @@
     "declaration": true,
     "lib": ["es2015", "dom"],
     "rootDir": "src",
-    "noImplicitAny": false,
     "sourceMap": true,
     "types": ["node", "jest"],
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "node_modules",

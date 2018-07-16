@@ -1,4 +1,4 @@
-import { upperFirst } from 'lodash'
+import upperFirst = require('lodash/upperFirst')
 
 const renderDependency = (libraryName, types) => {
   const path = libraryName.indexOf('components/') === -1 ? '' : '../'
