@@ -42,7 +42,7 @@ export default function component(name: string, jsx: string, dependencies: any =
 
   return `
     import React, { Component } from 'react'
-    ${dependenciesArray.join(``)}
+    ${dependenciesArray.join(`\n    `)}
 
     export default class ${upperFirst(name)} extends Component {
       render () {
