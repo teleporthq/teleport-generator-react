@@ -26,10 +26,9 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     const content = JSON.parse(JSON.stringify(componentContent))
 
     if (content.style) {
-      const styleName = findNextIndexedKeyInObject(styles, content.name || content.type)
+      const styleName = content.name || findNextIndexedKeyInObject(styles, content.name || content.type)
       styles[styleName] = content.style
       content.style = [styleName]
-      // @todo: handle platform
     }
 
     // if has children, do the same for children
@@ -49,47 +48,73 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     return { styles, content }
   }
 
-  public computeDependencies(content: any): any {
+  public computeDependencies(content: any, isPage: boolean): any {
     const dependencies = {}
 
-    const { source, type, children } = content
+    const { type, children, props } = content
+    let { source } = content
 
-    if (source && type) {
+    // if no source is specified, default to 'components'
+    if (!source) source = 'components'
+
+    if (type) {
       if (source === 'components') {
-        return {
-          [`components/${type}`]: [type],
+        // manage the case of component being a page
+        const componentDependencies = {
+          [`${isPage ? '../components/' : './'}${type}`]: [type],
         }
+
+        if (props && props.children && props.children.length > 0 && typeof props.children !== 'string') {
+          const childrenDependenciesArray = props.children.map((child) => {
+            return this.computeDependencies(child, isPage)
+          })
+
+          if (childrenDependenciesArray.length) {
+            childrenDependenciesArray.forEach((childrenDependency) => {
+              Object.keys(childrenDependency).forEach((childrenDependencyLibrary) => {
+                if (!componentDependencies[childrenDependencyLibrary]) componentDependencies[childrenDependencyLibrary] = []
+
+                componentDependencies[childrenDependencyLibrary] = union(
+                  componentDependencies[childrenDependencyLibrary],
+                  childrenDependency[childrenDependencyLibrary]
+                )
+              })
+            })
+          }
+        }
+
+        return componentDependencies
       }
 
-      if (source === 'pages') {
-        return {
-          [`pages/${type}`]: [type],
-        }
-      }
-
-      const mapping = this.generator.target.map(source, type)
-
-      if (mapping) {
-        if (mapping.library) {
-          // if the library is not yet in the dependecnies, add it
-          if (!dependencies[mapping.library]) dependencies[mapping.library] = []
+      const elementMapping = this.generator.target.map(source, type)
+      // custom source case
+      if (elementMapping) {
+        if (elementMapping.source) {
+          // if the library is not yet in the dependencies, add it
+          if (!dependencies[elementMapping.source]) dependencies[elementMapping.source] = []
 
           // if the type is not yet in the deps for the current library, add it
-          if (dependencies[mapping.library].indexOf(mapping.type) < 0) dependencies[mapping.library].push(mapping.type)
+          if (dependencies[elementMapping.source].indexOf(elementMapping.type) < 0)
+            dependencies[elementMapping.source].push({
+              // @ts-ignore
+              defaultImport: elementMapping.defaultImport,
+              type: elementMapping.type,
+            })
         }
       } else {
         // tslint:disable:no-console
-        console.error(`could not map '${type}' from '${source}' for target '${this.generator.targetName}'`)
+        // console.error(`could not map '${type}' from '${source}' for target '${this.generator.targetName}'`)
       }
     }
 
     // if there are childrens, get their deps and merge them with the current ones
     if (children && children.length > 0 && typeof children !== 'string') {
-      const childrenDependenciesArray = children.map((child) => this.computeDependencies(child))
+      const childrenDependenciesArray = children.map((child) => this.computeDependencies(child, isPage))
       if (childrenDependenciesArray.length) {
         childrenDependenciesArray.forEach((childrenDependency) => {
           Object.keys(childrenDependency).forEach((childrenDependencyLibrary) => {
             if (!dependencies[childrenDependencyLibrary]) dependencies[childrenDependencyLibrary] = []
+
             dependencies[childrenDependencyLibrary] = union(dependencies[childrenDependencyLibrary], childrenDependency[childrenDependencyLibrary])
           })
         })
@@ -105,7 +130,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     // retieve the target type from the lib
     let mapping: any = null
     let mappedType: string = type
-    if (source !== 'components' && source !== 'pages') {
+    if (source !== 'components') {
       mapping = this.generator.target.map(source, type)
       if (mapping) mappedType = mapping.type
     }
@@ -123,11 +148,22 @@ export default class ReactComponentGenerator extends ComponentGenerator {
 
     let childrenJSX: any = []
     if (children && children.length > 0) {
-      childrenJSX = typeof children === 'string' ? children : children.map((child) => this.renderComponentJSX(child))
-    }
+      if (typeof children === 'string') {
+        if (children.indexOf('$props.') === 0) {
+          const propKey = children.replace('$props.', '')
+          childrenJSX = `{this.props.${propKey}}`
+        } else {
+          // override Html default behavior regarding left and right trimming
+          if (children.indexOf(' ') === 0) children = '&nbsp;' + children
 
-    if (Array.isArray(childrenJSX)) {
-      childrenJSX = childrenJSX.join('')
+          if (children.substr(children.length - 1) === ' ') children += '&nbsp;'
+
+          // check for < and > and replace with their html entities otherwise
+          childrenJSX = children.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        }
+      } else {
+        childrenJSX = children.map((child) => this.renderComponentJSX(child))
+      }
     }
 
     styleNames = styleNames ? styleNames.map((style) => 'styles.' + style).join(', ') : null
@@ -140,14 +176,24 @@ export default class ReactComponentGenerator extends ComponentGenerator {
       mappedProps = mapping.props(mappedProps)
     }
 
+    if (mappedProps.children && Array.isArray(mappedProps.children)) {
+      childrenJSX = mappedProps.children.map((child) => this.renderComponentJSX(child))
+      delete mappedProps.children
+    }
+
+    if (Array.isArray(childrenJSX)) {
+      childrenJSX = childrenJSX.join('')
+    }
+
     return JSXrenderer(mappedType, childrenJSX, styleNames, mappedProps)
   }
 
   public generate(component: any, options: any = {}): FileSet {
+    const { isPage } = options
     const { name } = component
     let { content } = component
 
-    const dependencies = this.computeDependencies(content)
+    const dependencies = this.computeDependencies(content, isPage)
 
     const stylingResults = this.processStyles(content, {})
 

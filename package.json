@@ -1,6 +1,6 @@
 {
   "name": "@teleporthq/teleport-generator-react",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "React code generator for teleportHQ",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,7 +36,7 @@
     "prettier": "^1.13.6"
   },
   "dependencies": {
-    "@teleporthq/teleport-lib-js": "^0.0.15",
+    "@teleporthq/teleport-lib-js": "^0.0.18",
     "lodash": "^4.17.10"
   }
 }
