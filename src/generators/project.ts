@@ -2,6 +2,7 @@ import { ProjectGenerator, FileSet } from '@teleporthq/teleport-lib-js'
 import TeleportGeneratorReact from '../index'
 import packageRenderer from '../renderers/package'
 import ReactComponentGenerator from './component'
+import { ProjectGeneratorOptions } from '../types'
 
 export default class ReactProjectGenerator extends ProjectGenerator {
   public generator: TeleportGeneratorReact
@@ -12,20 +13,27 @@ export default class ReactProjectGenerator extends ProjectGenerator {
     this.componentGenerator = componentGenerator
   }
 
-  public generate(project: any, options: any = {}): FileSet {
+  public generate(project: any, options?: ProjectGeneratorOptions): FileSet {
     const { components, pages } = project
+    const componentsPath = options && options.componentsPath ? options.componentsPath : './components'
+    const pagesPath = options && options.pagesPath ? options.pagesPath : './pages'
+    const assetsPath = options && options.assetsPath ? options.assetsPath : './static'
+    const assetsUrl = options && options.assetsUrl ? options.assetsUrl : '/static'
 
     const result = new FileSet()
-    result.addFile('package.json', packageRenderer(project))
+
+    if (options && options.generatePackageFile) {
+      result.addFile('package.json', packageRenderer(project, options))
+    }
 
     if (components) {
       Object.keys(components).map((componentName) => {
         const component = components[componentName]
-        const componentResults = this.componentGenerator.generate(component)
+        const componentResults = this.componentGenerator.generate(component, { componentsPath, assetsUrl, assetsPath })
 
         componentResults.getFileNames().map(
           (fileName: string): void => {
-            result.addFile(`components/${fileName}`, componentResults.getContent(fileName))
+            result.addFile(`${componentsPath}/${fileName}`, componentResults.getContent(fileName))
           }
         )
       })
@@ -34,9 +42,9 @@ export default class ReactProjectGenerator extends ProjectGenerator {
     if (pages) {
       Object.keys(pages).map((pageName) => {
         const page = pages[pageName]
-        const pageResults = this.componentGenerator.generate(page)
+        const pageResults = this.componentGenerator.generate(page, { pagesPath, componentsPath, assetsUrl, assetsPath, isPage: true })
         pageResults.getFileNames().map((fileName) => {
-          result.addFile(`pages/${fileName}`, pageResults.getContent(fileName))
+          result.addFile(`${pagesPath}/${fileName}`, pageResults.getContent(fileName))
         })
       })
     }

@@ -1,6 +1,7 @@
 import upperFirst from 'lodash/upperFirst'
+import { ComponentGeneratorOptions } from '../types'
 
-const renderDependency = (libraryName, types) => {
+const renderDependency = (libraryName, types, options: ComponentGeneratorOptions) => {
   // there can be only one default import;
   // if multiple, the last one will be used;
   // @todo: discuss how to handle the case where multiple default imports are present
@@ -37,8 +38,8 @@ const renderDependency = (libraryName, types) => {
   return `import ${importArray.join(', ')} from '${libraryName}'`
 }
 
-export default function component(name: string, jsx: string, dependencies: any = {}, styles, props): any {
-  const dependenciesArray = Object.keys(dependencies).map((libraryName) => renderDependency(libraryName, dependencies[libraryName]))
+export default function component(name: string, jsx: string, dependencies: any = {}, styles, props, options?: ComponentGeneratorOptions): any {
+  const dependenciesArray = Object.keys(dependencies).map((libraryName) => renderDependency(libraryName, dependencies[libraryName], options))
 
   let propsString = ''
   if (props && props.length > 0) {

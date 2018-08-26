@@ -1,3 +1,5 @@
+import { ComponentGeneratorOptions } from '../types'
+
 function parseForProps(content: any, isStyleObject?: boolean) {
   if (!content) return
 
@@ -26,7 +28,7 @@ function parseForProps(content: any, isStyleObject?: boolean) {
   }
 }
 
-export default function jsx(name: string, childrenJSX?: string, styles?: string, props?: any): string {
+export default function jsx(name: string, childrenJSX?: string, styles?: string, props?: any, options?: ComponentGeneratorOptions): string {
   let stylesString = ''
   if (styles) {
     stylesString = styles.length > 0 ? `style={${styles}}` : `style={[${styles}]}`

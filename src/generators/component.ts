@@ -3,8 +3,17 @@ import upperFirst from 'lodash/upperFirst'
 import union from 'lodash/union'
 
 import TeleportGeneratorReact from '../index'
+import { ComponentGeneratorOptions } from '../types'
 import JSXrenderer from '../renderers/jsx'
 import COMPONENTrenderer from '../renderers/component'
+
+function cleanPath(pathString) {
+  return pathString
+    .replace(/^\.\./, '')
+    .replace(/^\./, '')
+    .replace(/^\//, '')
+    .replace(/\/$/, '')
+}
 
 function findNextIndexedKeyInObject(object, key) {
   if (!object[key]) return key
@@ -48,7 +57,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     return { styles, content }
   }
 
-  public computeDependencies(content: any, isPage: boolean): any {
+  public computeDependencies(content: any, options?: ComponentGeneratorOptions): any {
     const dependencies = {}
 
     const { type, children, props } = content
@@ -59,14 +68,25 @@ export default class ReactComponentGenerator extends ComponentGenerator {
 
     if (type) {
       if (source === 'components') {
+        const { isPage, pagesPath, componentsPath } = options
+
+        const cleanedPages = cleanPath(pagesPath || './pages')
+        const cleanedComponents = cleanPath(componentsPath)
+
+        const relativePath = cleanedPages.split('/').map((dir) => '..')
+
+        relativePath.push(cleanedComponents)
+
+        const componentsRelativePath = isPage ? relativePath.join('/') : '.'
+
         // manage the case of component being a page
         const componentDependencies = {
-          [`${isPage ? '../components/' : './'}${type}`]: [type],
+          [`${componentsRelativePath}/${type}`]: [type],
         }
 
         if (props && props.children && props.children.length > 0 && typeof props.children !== 'string') {
           const childrenDependenciesArray = props.children.map((child) => {
-            return this.computeDependencies(child, isPage)
+            return this.computeDependencies(child, options)
           })
 
           if (childrenDependenciesArray.length) {
@@ -109,7 +129,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
 
     // if there are childrens, get their deps and merge them with the current ones
     if (children && children.length > 0 && typeof children !== 'string') {
-      const childrenDependenciesArray = children.map((child) => this.computeDependencies(child, isPage))
+      const childrenDependenciesArray = children.map((child) => this.computeDependencies(child, options))
       if (childrenDependenciesArray.length) {
         childrenDependenciesArray.forEach((childrenDependency) => {
           Object.keys(childrenDependency).forEach((childrenDependencyLibrary) => {
@@ -124,7 +144,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     return dependencies
   }
 
-  public renderComponentJSX(content: any): any {
+  public renderComponentJSX(content: any, options: ComponentGeneratorOptions): any {
     const { source, type, ...props } = content
 
     // retieve the target type from the lib
@@ -162,7 +182,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
           childrenJSX = children.replace(/</g, '&lt;').replace(/>/g, '&gt;')
         }
       } else {
-        childrenJSX = children.map((child) => this.renderComponentJSX(child))
+        childrenJSX = children.map((child) => this.renderComponentJSX(child, options))
       }
     }
 
@@ -177,7 +197,7 @@ export default class ReactComponentGenerator extends ComponentGenerator {
     }
 
     if (mappedProps.children && Array.isArray(mappedProps.children)) {
-      childrenJSX = mappedProps.children.map((child) => this.renderComponentJSX(child))
+      childrenJSX = mappedProps.children.map((child) => this.renderComponentJSX(child, options))
       delete mappedProps.children
     }
 
@@ -185,27 +205,26 @@ export default class ReactComponentGenerator extends ComponentGenerator {
       childrenJSX = childrenJSX.join('')
     }
 
-    return JSXrenderer(mappedType, childrenJSX, styleNames, mappedProps)
+    return JSXrenderer(mappedType, childrenJSX, styleNames, mappedProps, options)
   }
 
-  public generate(component: any, options: any = {}): FileSet {
-    const { isPage } = options
+  public generate(component: any, options: ComponentGeneratorOptions): FileSet {
     const { name } = component
     let { content } = component
 
-    const dependencies = this.computeDependencies(content, isPage)
+    const dependencies = this.computeDependencies(content, options)
 
     const stylingResults = this.processStyles(content, {})
 
     const styles = stylingResults.styles
     content = stylingResults.content
 
-    const jsx = this.renderComponentJSX(content)
+    const jsx = this.renderComponentJSX(content, options)
 
     const props = component.editableProps ? Object.keys(component.editableProps) : null
 
     const result = new FileSet()
-    result.addFile(`${upperFirst(component.name)}.js`, COMPONENTrenderer(name, jsx, dependencies, styles, props))
+    result.addFile(`${upperFirst(component.name)}.js`, COMPONENTrenderer(name, jsx, dependencies, styles, props, options))
 
     return result
   }
