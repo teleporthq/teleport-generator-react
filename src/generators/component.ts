@@ -7,12 +7,45 @@ import { ComponentGeneratorOptions } from '../types'
 import JSXrenderer from '../renderers/jsx'
 import COMPONENTrenderer from '../renderers/component'
 
+/**
+ * Cleans path from leading and tailing "." and "/" characters
+ * @param pathString
+ */
 function cleanPath(pathString) {
   return pathString
     .replace(/^\.\./, '')
     .replace(/^\./, '')
     .replace(/^\//, '')
     .replace(/\/$/, '')
+}
+
+/**
+ * Given a source directory and a target filename, return the relative
+ * file path from source to target.
+ * @param source {String} directory path to start from for traversal
+ * @param target {String} directory path and filename to seek from source
+ * @return Relative path (e.g. "../../style.css") as {String}
+ */
+function getRelativePath(source, target) {
+  const sep = '/'
+  const targetArr = target.split(sep)
+  const sourceArr = source.split(sep)
+  const filename = targetArr.pop()
+  const targetPath = targetArr.join(sep)
+  let relativePath = ''
+
+  while (targetPath.indexOf(sourceArr.join(sep)) === -1) {
+    sourceArr.pop()
+    relativePath += '..' + sep
+  }
+
+  const relPathArr = targetArr.slice(sourceArr.length)
+
+  if (relPathArr.length) {
+    relativePath += relPathArr.join(sep) + sep
+  }
+
+  return relativePath + filename
 }
 
 function findNextIndexedKeyInObject(object, key) {
@@ -22,6 +55,14 @@ function findNextIndexedKeyInObject(object, key) {
     i++
   }
   return key + '_' + i
+}
+
+const defaultOption = {
+  assetsPath: './static',
+  assetsUrl: '/static',
+  componentsPath: './components',
+  isPage: false,
+  pagesPath: './pages',
 }
 
 export default class ReactComponentGenerator extends ComponentGenerator {
@@ -68,20 +109,22 @@ export default class ReactComponentGenerator extends ComponentGenerator {
 
     if (type) {
       if (source === 'components') {
-        const { isPage, pagesPath, componentsPath } = options
+        const { isPage, pagesPath, componentsPath } = options || defaultOption
 
         const cleanedPages = cleanPath(pagesPath || './pages')
-        const cleanedComponents = cleanPath(componentsPath)
+        const cleanedComponents = cleanPath(componentsPath || './components')
 
-        const relativePath = cleanedPages.split('/').map((dir) => '..')
+        const relativePagesToComponentsPath = getRelativePath(cleanedPages, cleanedComponents)
 
-        relativePath.push(cleanedComponents)
+        const componentsRelativePath = isPage ? relativePagesToComponentsPath : '.'
 
-        const componentsRelativePath = isPage ? relativePath.join('/') : '.'
-
-        // manage the case of component being a page
         const componentDependencies = {
-          [`${componentsRelativePath}/${type}`]: [type],
+          [`${componentsRelativePath}/${type}`]: [
+            {
+              defaultImport: true,
+              type,
+            },
+          ],
         }
 
         if (props && props.children && props.children.length > 0 && typeof props.children !== 'string') {
