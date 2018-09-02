@@ -11,14 +11,7 @@ const renderDependency = (libraryName, types, options: ComponentGeneratorOptions
     types.map((type) => {
       // if the type is a string
       if (typeof type === 'string') {
-        // and it is from components
-        if (libraryName.indexOf('../components') === 0 || libraryName.indexOf('./') === 0) {
-          // treat it as a default import
-          defaultType = type
-        } else {
-          // otherwise add it to the deconstruction imports
-          deconstructedTypes.push(type)
-        }
+        deconstructedTypes.push(type)
       } else {
         if (type.defaultImport) {
           defaultType = type.type
