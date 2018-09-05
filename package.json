@@ -35,7 +35,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@teleporthq/teleport-lib-js": "^0.0.20",
+    "@teleporthq/teleport-lib-js": "^0.1.1",
     "lodash": "^4.17.10"
   }
 }
