@@ -54,14 +54,14 @@ function renderJsx(
   /** @TODO: check */
   const propsString = propsArray.length ? ' ' + propsArray.join(' ') : ''
 
-  const stylesString = `<style jsx>{\`\n    ${jsstocss.stylesheet(styles).css}  \n\`}</style>`
+  const stylesString = isRoot ? `<style jsx>{\`\n    ${jsstocss.stylesheet(styles).css}  \n\`}</style>` : ''
   const classNameString = className ? `className="${className}"` : ''
 
   /** if there are children, explicitly closing tags are needed, self closing oherwise */
   /** if it's the root node, need to render it's style jsx */
-  if (childrenJSX && childrenJSX.length > 0) {
-    return `<${name} ${classNameString} ${propsString}>\n
-      ${childrenJSX}\n
+  if ((childrenJSX && childrenJSX.length > 0) || isRoot) {
+    return `<${name} ${classNameString} ${propsString}>
+      ${childrenJSX}
       ${isRoot ? stylesString : ''}
     </${name}>`
   } else {
