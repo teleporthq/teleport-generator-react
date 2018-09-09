@@ -1,4 +1,5 @@
-import { ComponentRenderer, FileSet, Target, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js'
+import { ComponentCodeGenerator, FileSet, Target, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js'
+import { Content } from '@teleporthq/teleport-lib-js/dist/types'
 import upperFirst from 'lodash/upperFirst'
 
 /** @TODO: check */
@@ -129,8 +130,8 @@ function renderComponentJSX(content: any, target: Target, options: ComponentGene
   return renderJsx(mappedType, className, childrenJSX, mappedProps, options)
 }
 
-export default class ReactJSSReactComponentRenderer extends ComponentRenderer {
-  public render(name: string, content: string, dependencies: any = {}, styles, props, target: Target, options?: ComponentGeneratorOptions): FileSet | null {
+export default class ReactJSSReactComponentCodeGenerator extends ComponentCodeGenerator {
+  public render(name: string, content: Content, dependencies: any = {}, styles, props, target: Target, options?: ComponentGeneratorOptions): FileSet | null {
     /** prepare dependencies to be rendered */
     const dependenciesArray = Object.keys(dependencies).map((libraryName) => this.renderDependency(libraryName, dependencies[libraryName], options))
 

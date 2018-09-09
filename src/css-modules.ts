@@ -1,4 +1,5 @@
-import { ComponentRenderer, FileSet, Target, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js'
+import { ComponentCodeGenerator, FileSet, Target, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js'
+import { Content } from '@teleporthq/teleport-lib-js/dist/types'
 import styleTransformers from '@teleporthq/teleport-lib-js/dist/transformers/styles'
 const { jsstocss } = styleTransformers
 import upperFirst from 'lodash/upperFirst'
@@ -132,8 +133,8 @@ function renderComponentJSX(content: any, styles: any, target: Target, options: 
   return renderJsx(mappedType, className, childrenJSX, styles, mappedProps, options)
 }
 
-export default class CSSModulesReactComponentRenderer extends ComponentRenderer {
-  public render(name: string, content: string, dependencies: any = {}, styles, props, target: Target, options?: ComponentGeneratorOptions): FileSet | null {
+export default class CSSModulesReactComponentCodeGenerator extends ComponentCodeGenerator {
+  public render(name: string, content: Content, dependencies: any = {}, styles, props, target: Target, options?: ComponentGeneratorOptions): FileSet | null {
     /** prepare dependencies to be rendered */
     const dependenciesArray = Object.keys(dependencies).map((libraryName) => this.renderDependency(libraryName, dependencies[libraryName], options))
 
