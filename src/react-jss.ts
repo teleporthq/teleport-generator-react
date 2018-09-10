@@ -1,5 +1,5 @@
-import { ComponentCodeGenerator, FileSet, Target, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js'
-import { Content } from '@teleporthq/teleport-lib-js/dist/types'
+import { ComponentCodeGenerator, FileSet, Target } from '@teleporthq/teleport-lib-js'
+import { Content, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js/dist/types'
 import upperFirst from 'lodash/upperFirst'
 
 /** @TODO: check */

@@ -1,6 +1,6 @@
-import { ComponentCodeGenerator, FileSet, Target, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js'
+import { ComponentCodeGenerator, FileSet, Target } from '@teleporthq/teleport-lib-js'
 import styleTransformers from '@teleporthq/teleport-lib-js/dist/transformers/styles'
-import { Content } from '@teleporthq/teleport-lib-js/dist/types'
+import { Content, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js/dist/types'
 const { jsstocss } = styleTransformers
 import upperFirst from 'lodash/upperFirst'
 
