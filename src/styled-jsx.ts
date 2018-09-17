@@ -3,74 +3,32 @@ import styleTransformers from '@teleporthq/teleport-lib-js/dist/transformers/sty
 import { Content, ComponentGeneratorOptions } from '@teleporthq/teleport-lib-js/dist/types'
 const { jsstocss } = styleTransformers
 import upperFirst from 'lodash/upperFirst'
+import { PropsUtils, StylesUtils } from './utils'
 
-/** @TODO: check */
-function parseForProps(content: any, isStyleObject?: boolean) {
-  if (!content) return
-
-  if (typeof content === 'string') {
-    if (content.indexOf('$props.') === 0) {
-      return `{${content.replace('$props.', 'this.props.')}}`
-    } else {
-      return `"${content}"`
-    }
-  } else {
-    Object.keys(content).forEach((value) => {
-      if (typeof content[value] === 'string') {
-        if (content[value].indexOf('$props.') === 0) {
-          content[value] = `\${${content[value].replace('$props.', 'this.props.')}}`
-        }
-      } else {
-        parseForProps(content[value])
-      }
-    })
-
-    if (isStyleObject) {
-      return content
-    }
-
-    return isStyleObject ? content : `{${JSON.stringify(content)}}`
-  }
-}
-
-function renderJsx(
-  name: string,
-  className: string,
-  isRoot?: boolean,
-  childrenJSX?: string,
-  styles?: any,
-  props?: any,
-  options?: ComponentGeneratorOptions
-): string {
-  /** @TODO: verify if this still works; it should retrieve a props value */
-  const propsArray = []
-  if (props) {
-    Object.keys(props).map((propName) => {
-      const propValue = parseForProps(props[propName])
-      propsArray.push(`${propName}={${JSON.stringify(propValue)}}`)
-    })
-  }
-
-  /** prepare the props value string */
-  /** @TODO: check */
+function renderJsx(name: string, className: string, isRoot?: boolean, childrenJSX?: string, styles?: any, inlineStyle?: any, props?: any): string {
+  const propsArray = Object.keys(props).map((propName) => {
+    const propValue = PropsUtils.parseForProps(props[propName]) || '""'
+    return `${propName}=${propValue}`
+  })
   const propsString = propsArray.length ? ' ' + propsArray.join(' ') : ''
 
-  const stylesString = isRoot ? `<style jsx>{\`\n    ${jsstocss.stylesheet(styles).css}  \n\`}</style>` : ''
+  const stylesString = isRoot && Object.keys(styles).length ? `<style jsx>{\`\n    ${jsstocss.stylesheet(styles).css}  \n\`}</style>` : ''
   const classNameString = className ? `className="${className}"` : ''
+  const inlineStyleString = inlineStyle ? `style={${inlineStyle}}` : ''
 
   /** if there are children, explicitly closing tags are needed, self closing oherwise */
   /** if it's the root node, need to render it's style jsx */
   if ((childrenJSX && childrenJSX.length > 0) || isRoot) {
-    return `<${name} ${classNameString} ${propsString}>
+    return `<${name} ${classNameString} ${propsString} ${inlineStyleString}>
       ${childrenJSX}
       ${isRoot ? stylesString : ''}
     </${name}>`
   } else {
-    return `<${name} ${classNameString} ${propsString}/>`
+    return `<${name} ${classNameString} ${propsString} ${inlineStyleString}/>`
   }
 }
 
-function renderComponentJSX(content: any, isRoot: boolean = false, styles: any, target: Target, options: ComponentGeneratorOptions): any {
+function renderComponentJSX(content: any, isRoot: boolean = false, styles: any, inlineStyle: string, target: Target, options: ComponentGeneratorOptions): any {
   const { source, type, ...props } = content
 
   /** retieve the target type from the lib */
@@ -117,7 +75,7 @@ function renderComponentJSX(content: any, isRoot: boolean = false, styles: any, 
       }
     } else {
       /** recurse into children to calsulate their JSX */
-      childrenJSX = children.map((child) => renderComponentJSX(child, false, styles, target, options))
+      childrenJSX = children.map((child) => renderComponentJSX(child, false, styles, inlineStyle, target, options))
     }
   }
 
@@ -132,7 +90,7 @@ function renderComponentJSX(content: any, isRoot: boolean = false, styles: any, 
 
   /** if there are cbhildren defined in the props, recurse into them */
   if (mappedProps.children && Array.isArray(mappedProps.children)) {
-    childrenJSX = mappedProps.children.map((child) => renderComponentJSX(child, false, styles, target, options))
+    childrenJSX = mappedProps.children.map((child) => renderComponentJSX(child, false, styles, inlineStyle, target, options))
     delete mappedProps.children
   }
 
@@ -140,31 +98,32 @@ function renderComponentJSX(content: any, isRoot: boolean = false, styles: any, 
     childrenJSX = childrenJSX.join('')
   }
 
-  return renderJsx(mappedType, className, isRoot, childrenJSX, styles, mappedProps, options)
+  return renderJsx(mappedType, className, isRoot, childrenJSX, styles, inlineStyle, mappedProps)
 }
 
 export default class StyledJSXReactComponentCodeGenerator extends ComponentCodeGenerator {
   public render(name: string, content: Content, dependencies: any = {}, styles, props, target: Target, options?: ComponentGeneratorOptions): FileSet | null {
     /** prepare dependencies to be rendered */
-    const dependenciesArray = Object.keys(dependencies).map((libraryName) => this.renderDependency(libraryName, dependencies[libraryName], options))
+    const dependenciesArray = this.getDependenciesString(dependencies, options)
+
+    const { dynamicStyles, staticStyles } = StylesUtils.detectDynamicStyle(styles)
+    const { styleName, styleString } = StylesUtils.generateInlineStyleForElement(name, dynamicStyles)
 
     /** prepare component's render method JSX */
-    const jsx = renderComponentJSX(content, true, styles, target, options)
+    const jsx = renderComponentJSX(content, true, staticStyles, styleName, target, options)
 
     /** prepare props string if any */
-    let propsString = ''
-    if (props && props.length > 0) {
-      propsString = `const { ${props.join(', ')} } = this.props`
-    }
+    const propsString = props && props.length > 0 ? `const { ${props.join(', ')} } = this.props` : ''
 
     /** class content */
     const classFileContent = `
       import React, { Component } from 'react'
-      ${dependenciesArray.join(`\n    `)}
+      ${dependenciesArray}
 
       export default class ${upperFirst(name)} extends Component {
         render () {
           ${propsString}
+          ${styleString}
           return (
             ${jsx}
           )
@@ -173,9 +132,14 @@ export default class StyledJSXReactComponentCodeGenerator extends ComponentCodeG
     `
 
     const result = new FileSet()
-
     result.addFile(`${upperFirst(name)}.js`, classFileContent)
 
     return result
+  }
+
+  private getDependenciesString(dependencies: any = {}, options?: ComponentGeneratorOptions): string {
+    return Object.keys(dependencies)
+      .map((libraryName) => this.renderDependency(libraryName, dependencies[libraryName], options))
+      .join('\n    ')
   }
 }

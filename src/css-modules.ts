@@ -150,7 +150,7 @@ export default class CSSModulesReactComponentCodeGenerator extends ComponentCode
     /** class content */
     const classFileContent = `
       import React, { Component } from 'react'
-      import styles from './styles.css
+      import styles from './styles.css'
       ${dependenciesArray.join(`\n    `)}
 
       export default class ${upperFirst(name)} extends Component {
