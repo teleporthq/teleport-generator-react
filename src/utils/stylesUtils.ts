@@ -21,18 +21,22 @@ export default class StylesUtils {
 
   public static generateInlineStyleForElement(elementName: string, style: any): any {
     if (!Object.keys(style).length) {
-      return { styleName: null, styleString: '' }
+      return { styleMaps: null, styleString: '' }
     }
 
-    const elementStyle = Object.keys(style)
-      .map((className) => computeInlineStyleValueMap(style, className))
-      .reduce((acc, val) => acc.concat(val), [])
+    const elementStyleName = `${GeneralUtils.lowerFirst(elementName)}Style`
+    const styleMaps = []
+    const elementStyles = Object.keys(style)
+      .map((className) => {
+        const styleName = `${GeneralUtils.lowerFirst(className)}Style`
+        const styleValue = computeInlineStyleValueMap(style, className).join(',\n')
+        styleMaps.push({ className, styleName: `${elementStyleName}.${styleName}` })
+        return `${styleName}: { \n ${styleValue} \n }`
+      })
       .join(',\n')
 
-    const styleName = `${GeneralUtils.lowerFirst(elementName)}Style`
-    const styleString = `const ${styleName} = {\n ${elementStyle}\n }`
-
-    return { styleName, styleString }
+    const styleString = `const ${elementStyleName} = { \n ${elementStyles} \n }`
+    return { styleMaps, styleString }
   }
 }
 
