@@ -20,7 +20,7 @@ export default class ElementRenderer {
       : `<${name} ${classNameString} ${propsString} ${inlineStyleString}/>`
   }
 
-  public static renderElement(name: string, className: any, childrenJSX?: string, styleMaps?: any, props?: any): string {
+  public static renderElement(name: string, className: any, children?: string, styleMaps?: any, props?: any): string {
     const propsString = generatePropsString(props)
     const classNameString = className ? `className={classes.${className}}` : ''
 
@@ -28,9 +28,9 @@ export default class ElementRenderer {
     // const inlineStyleString = styleMaps ? `style={${styleMaps}}` : ''
 
     /** if there are children, explicitly closing tags are needed, self closing oherwise */
-    return childrenJSX && childrenJSX.length > 0
+    return children && children.length > 0
       ? `<${name} ${classNameString} ${propsString} ${inlineStyleString}>\n
-          ${childrenJSX}
+          ${children}
         </${name}>`
       : `<${name} ${classNameString} ${propsString} ${inlineStyleString}/>`
   }
