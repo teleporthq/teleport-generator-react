@@ -7,7 +7,7 @@ export default class PropsUtils {
 }
 
 function parseForProps(content: any, isStyleObject?: boolean) {
-  if (!content) return
+  if (!content) return ''
 
   if (typeof content === 'string') {
     return content.indexOf(PROPS_KEY) === 0 ? `{${content.replace(PROPS_KEY, THIS_PROPS)}}` : `"${content}"`

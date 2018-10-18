@@ -1,0 +1,26 @@
+{
+  "stringContentWithProps": "$props.content",
+  "stringContentWithoutProps": "testContent",
+  "simpleContentWithProps": {
+    "src": "$props.src",
+    "alt": "$props.name"
+  },
+  "simpleContentWithoutProps": {
+    "src": "test",
+    "alt": "test"
+  },
+  "contentWithProps": {
+    "src": "src",
+    "alt": "alt",
+    "props": {
+      "src": "src"
+    },
+    "children": [{
+      "type": "TestComponent1",
+      "source": "components",
+      "props": {
+        "src": "$props.src"
+      }
+    }]
+  }
+}
