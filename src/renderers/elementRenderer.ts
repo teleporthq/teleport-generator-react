@@ -48,7 +48,7 @@ function generatePropsString(props: any = {}, stringify: boolean = false): any {
 
 function generateInlineString(classNames: any, styleMaps: any): string {
   const styles = styleMaps.map((styleMap) => {
-    const isInClassNames = classNames.indexOf(styleMap.className) >= 0
+    const isInClassNames = classNames && classNames.indexOf(styleMap.className) >= 0
     return isInClassNames ? styleMap.styleName : null
   })
   const filteredStyles = styles.filter((style) => style)
